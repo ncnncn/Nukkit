@@ -3005,9 +3005,11 @@ public class Level implements ChunkManager, Metadatable {
         // These numbers are from Minecraft
 
         if (raining) {
+            int rainTime = rand.nextInt(12000) + 12000;
+
             pk.evid = LevelEventPacket.EVENT_START_RAIN;
-            pk.data = rand.nextInt(50000) + 10000;
-            setRainTime(rand.nextInt(12000) + 12000);
+            pk.data = rainTime;
+            setRainTime(rainTime);
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
             setRainTime(rand.nextInt(168000) + 12000);
