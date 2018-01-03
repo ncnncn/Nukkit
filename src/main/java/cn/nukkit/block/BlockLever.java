@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.LeverSound;
 import cn.nukkit.math.BlockFace;
@@ -209,5 +210,10 @@ public class BlockLever extends BlockFlowable {
                 META_LOOKUP[face.getMetadata()] = face;
             }
         }
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, 0, 1);
     }
 }
