@@ -543,6 +543,8 @@ public class PluginManager {
     }
 
     public void callEvent(Event event) {
+//        if (!(event instanceof PlayerMoveEvent || event instanceof BlockSpreadEvent || event instanceof DataPacketSendEvent || event instanceof DataPacketReceiveEvent || event instanceof ChunkLoadEvent))
+//            System.out.println(event.getClass().getName());
         try {
             for (RegisteredListener registration : getEventListeners(event.getClass()).getRegisteredListeners()) {
                 if (!registration.getPlugin().isEnabled()) {

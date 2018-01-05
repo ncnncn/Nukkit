@@ -2,6 +2,9 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.inventory.transaction.InventoryTransaction;
+import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBookEnchanted;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -196,27 +199,33 @@ public class EnchantInventory extends ContainerInventory {
         }
     }
 
-    public void onEnchant(Player who, Item before, Item after) {
+    public Item onEnchant(Player who, Item before, Item after) {
         Item result = (before.getId() == Item.BOOK) ? new ItemBookEnchanted() : before;
         if (!before.hasEnchantments() && after.hasEnchantments() && after.getId() == result.getId() && this.levels != null && this.entries != null) {
             Enchantment[] enchantments = after.getEnchantments();
             for (int i = 0; i < 3; i++) {
-                if (Arrays.equals(enchantments, this.entries[i].getEnchantments())) {
+                if (true || Arrays.equals(enchantments, this.entries[i].getEnchantments())) {
                     Item lapis = this.getItem(1);
                     int level = who.getExperienceLevel();
                     int exp = who.getExperience();
                     int cost = this.entries[i].getCost();
-                    if (lapis.getId() == Item.DYE && lapis.getDamage() == DyeColor.BLUE.getDyeData() && lapis.getCount() > i && level >= cost) {
+                    if (who.getGamemode() == Player.CREATIVE) {
+                        result.addEnchantment(enchantments);
+                        this.setItem(0, result);
+                        return result;
+                        //TODO Ree
+                    } else if (lapis.getId() == Item.DYE && lapis.getDamage() == DyeColor.BLUE.getDyeData() && lapis.getCount() > i && level >= cost) {
                         result.addEnchantment(enchantments);
                         this.setItem(0, result);
                         lapis.setCount(lapis.getCount() - i - 1);
                         this.setItem(1, lapis);
                         who.setExperience(exp, level - cost);
-                        break;
+                        return result;
                     }
                 }
             }
         }
+        return result;
     }
 
     public int countBookshelf() {
@@ -263,8 +272,29 @@ public class EnchantInventory extends ContainerInventory {
             }
             pk.addEnchantList(list);
         }
+        pk.cleanRecipes = false;
+//        Server.broadcastPacket(this.getViewers(), pk); //TODO: fix this, causes crash in 1.2
+    }
 
-        //Server.broadcastPacket(this.getViewers(), pk); //TODO: fix this, causes crash in 1.2
+    public void enchant(InventoryTransaction transaction, Player player) {
+        EnchantInventory inv = (EnchantInventory) transaction.getInventories().iterator().next();
+        Item o = null;
+        Item n = null;
+        for (InventoryAction action : transaction.getActions()) {
+            if (action instanceof SlotChangeAction && ((SlotChangeAction) action).getSlot() == 0)
+                if (action.getSourceItem() == null || action.getSourceItem().getId() == Item.AIR) {
+                    n = action.getTargetItem();
+                } else {
+                    o = action.getSourceItem();
+                }
+        }
+        if (o != null && n != null)
+//            inv.onEnchant(player, o, n);
+            inv.setItem(0, n);
+        //TODO need more check when sync enchant entries
+//        transaction.execute();
+        return;
+
     }
 
    /*@Override

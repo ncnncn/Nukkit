@@ -158,7 +158,8 @@ public class Network {
             }
 
             processPackets(player, packets);
-
+            //DEBUG 显示包数据
+//            this.server.getLogger().debug("BatchPacket 0x" + Binary.bytesToHexString(packet.payload));
         } catch (Exception e) {
             if (Nukkit.DEBUG > 0) {
                 this.server.getLogger().debug("BatchPacket 0x" + Binary.bytesToHexString(packet.payload));

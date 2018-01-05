@@ -102,6 +102,7 @@ public class CraftingDataPacket extends DataPacket {
             }
             stream.putString(entry.getRandomName());
         }
+//        stream.putBoolean(true);
         return CraftingDataPacket.ENTRY_ENCHANT_LIST;
     }
 

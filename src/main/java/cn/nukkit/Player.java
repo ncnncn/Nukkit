@@ -31,6 +31,7 @@ import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
+import cn.nukkit.inventory.transaction.TransactionFactory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
@@ -225,6 +226,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Map<Integer, FormWindow> serverSettings = new HashMap<>();
 
     protected Map<Long, DummyBossBar> dummyBossBars = new HashMap<>();
+    private Inventory openInventory;
 
     public int getStartActionTick() {
         return startAction;
@@ -2385,6 +2387,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.level.addParticle(new PunchBlockParticle(pos, block, face));
                             }
                             break;
+                        case PlayerActionPacket.ACTION_ENCHANTING:
+                            if (openInventory != null && openInventory instanceof EnchantInventory) {
+                                //TODO enchant
+                            }
+                            break;
                     }
 
                     this.startAction = -1;
@@ -2527,6 +2534,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             /*this.dataPacket(packet); //bug?
                             Server.broadcastPacket(this.getViewers().values(), packet);*/
                             break;
+                        case EntityEventPacket.ENCHANT:
+                            if (entityEventPacket.data < 0 && (this.getExperienceLevel() + entityEventPacket.data) >= 0) {
+                                this.expLevel = this.expLevel + entityEventPacket.data;
+                                sendExperienceLevel();
+                            } else {
+                                //TODO enchant fail, prevent enchanting
+                            }
+                            break;
                     }
                     break;
                 case ProtocolInfo.COMMAND_REQUEST_PACKET:
@@ -2567,6 +2582,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (this.windowIndex.containsKey(containerClosePacket.windowId)) {
                         this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windowIndex.get(containerClosePacket.windowId), this));
                         this.removeWindow(this.windowIndex.get(containerClosePacket.windowId));
+                        this.openInventory = null;
                     } else {
                         this.windowIndex.remove(containerClosePacket.windowId);
                     }
@@ -2742,8 +2758,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     switch (transactionPacket.transactionType) {
                         case InventoryTransactionPacket.TYPE_NORMAL:
-                            InventoryTransaction transaction = new InventoryTransaction(this, actions);
-
+                            InventoryTransaction transaction = TransactionFactory.createTransaction(this, actions);
                             if (!transaction.execute()) {
                                 this.server.getLogger().debug("Failed to execute inventory transaction from " + this.getName() + " with actions: " + Arrays.toString(transactionPacket.actions));
 
@@ -3093,6 +3108,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Sends a chat message as this player. If the message begins with a / (forward-slash) it will be treated
      * as a command.
      */
+
     public boolean chat(String message) {
         if (!this.spawned || !this.isAlive()) {
             return false;
@@ -4191,6 +4207,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         if (inventory.open(this)) {
+            openInventory = inventory;
             return cnt;
         } else {
             this.removeWindow(inventory);
@@ -4528,6 +4545,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     /**
      * Show a window of a XBOX account's profile
+     *
      * @param xuid XUID
      */
     public void showXboxProfile(String xuid) {

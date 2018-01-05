@@ -1,5 +1,6 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
@@ -135,6 +136,8 @@ public abstract class EntityProjectile extends Entity {
                     continue;
                 }
 
+                if ((entity instanceof Player) && ((Player) entity).gamemode == 3)
+                    continue;
                 AxisAlignedBB axisalignedbb = entity.boundingBox.grow(0.3, 0.3, 0.3);
                 MovingObjectPosition ob = axisalignedbb.calculateIntercept(this, moveVector);
 

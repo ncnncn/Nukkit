@@ -906,7 +906,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                 .map(Effect::getAmplifier).orElse(0);
         boolean insideOfWaterWithoutAquaAffinity = player.isInsideOfWater() &&
                 Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
-                        .map(Enchantment::getLevel).map(l -> l >= 1).orElse(false);
+                        .map(Enchantment::getLevel).map(l -> l < 1).orElse(true);
         boolean outOfWaterButNotOnGround = (!player.isInsideOfWater()) && (!player.isOnGround());
         return breakTime0(blockHardness, correctTool, canHarvestWithHand, blockId, itemToolType, itemTier,
                 efficiencyLoreLevel, hasteEffectLevel, insideOfWaterWithoutAquaAffinity, outOfWaterButNotOnGround);
@@ -937,10 +937,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                     case ItemTool.TIER_IRON:
                         base /= 6;
                         break;
-                    case ItemTool.TIER_DIAMOND:
+                    case ItemTool.TIER_GOLD:
                         base /= 8;
                         break;
-                    case ItemTool.TIER_GOLD:
+                    case ItemTool.TIER_DIAMOND:
                         base /= 12;
                         break;
                 }

@@ -170,7 +170,7 @@ public class NetworkInventoryAction {
                         inventorySlot = window.first(this.oldItem, true);
 
                         if (inventorySlot == -1) {
-                            return null;
+                            return new DropItemAction(this.oldItem, this.newItem);
                         }
 
                         return new SlotChangeAction(window, inventorySlot, this.oldItem, this.newItem);
@@ -217,20 +217,15 @@ public class NetworkInventoryAction {
                     EnchantInventory enchant = (EnchantInventory) inv;
 
                     switch (this.windowId) {
-                        case SOURCE_TYPE_ENCHANT_INPUT:
+                        case SOURCE_TYPE_ENCHANT_INPUT://15
                             this.inventorySlot = 0;
-                            Item local = enchant.getItem(0);
-                            if (local.equals(this.newItem, true, false)) {
-                                enchant.setItem(0, this.newItem);
-                            }
-                            break;
-                        case SOURCE_TYPE_ENCHANT_MATERIAL:
+                            return new EnchantAction(inv, this.inventorySlot, this.oldItem, newItem);
+                        case SOURCE_TYPE_ENCHANT_MATERIAL://16
                             this.inventorySlot = 1;
-                            break;
-                        case SOURCE_TYPE_ENCHANT_OUTPUT:
-                            enchant.sendSlot(0, player);
-                            //ignore?
-                            return null;
+                            return new SlotChangeAction(inv, this.inventorySlot, oldItem, newItem);
+                        case SOURCE_TYPE_ENCHANT_OUTPUT://17
+                            this.inventorySlot = -1;
+                            return new EnchantAction(inv, this.inventorySlot, oldItem, newItem);
                     }
 
                     return new SlotChangeAction(enchant, this.inventorySlot, this.oldItem, this.newItem);

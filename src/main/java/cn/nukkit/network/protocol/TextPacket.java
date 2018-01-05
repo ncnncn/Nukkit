@@ -18,8 +18,8 @@ public class TextPacket extends DataPacket {
     public static final byte TYPE_POPUP = 3;
     public static final byte TYPE_TIP = 4;
     public static final byte TYPE_SYSTEM = 5;
-    public static final byte TYPE_WHISPER = 6;
-    public static final byte TYPE_ANNOUNCEMENT = 7;
+    public static final byte TYPE_WHISPER = 6;//只显示source
+    public static final byte TYPE_ANNOUNCEMENT = 7;//这应该是whisper
 
     public byte type;
     public String source = "";
