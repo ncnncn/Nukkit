@@ -42,6 +42,27 @@ public class InventoryTransaction {
 
         for (InventoryAction action : actions) {
             this.addAction(action);
+
+            int slot = -1;
+            String type = "";
+            if (action instanceof SlotChangeAction) {
+                slot = ((SlotChangeAction)action).getSlot();
+                type = ((SlotChangeAction)action).getInventory().getType().getDefaultTitle();
+            }
+
+            System.out.println(String.format("Try %d:%d -> %d:%d @ %s:%d", action.getSourceItem().getId(), action.getSourceItem().getCount(), action.getTargetItem().getId(), action.getTargetItem().getCount(), type, slot));
+        }
+        Map<Integer, Item> contents = source.getCraftingGrid().getContents();
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                Item item = contents.get(i*3 + j);
+                if(item != null) {
+                    System.out.print(String.format("%d:%d\t", item.getId(), item.getCount()));
+                } else {
+                    System.out.print("-\t");
+                }
+            }
+            System.out.println();
         }
     }
 
@@ -136,7 +157,7 @@ public class InventoryTransaction {
      *
      * @return bool
      */
-    protected boolean squashDuplicateSlotChanges() {
+    protected synchronized boolean squashDuplicateSlotChanges() {
         Map<Integer, List<SlotChangeAction>> slotChanges = new HashMap<>();
 
         for (InventoryAction action : this.actions) {
@@ -171,7 +192,7 @@ public class InventoryTransaction {
             for (int i = 0; i < list.size(); i++) {
                 SlotChangeAction action = list.get(i);
 
-                if (action.isValid(this.source)) {
+                if (action.getSourceItem().getId() != 0) {
                     originalAction = action;
                     lastTargetItem = action.getTargetItem();
                     list.remove(i);
@@ -195,11 +216,15 @@ public class InventoryTransaction {
                         lastTargetItem = action.getTargetItem();
                         list.remove(i);
                         sortedThisLoop++;
+
+                        break;
                     }
                     else if (actionSource.equals(lastTargetItem)) {
                         lastTargetItem.count -= actionSource.count;
                         list.remove(i);
                         if (lastTargetItem.count == 0) sortedThisLoop++;
+
+                        break;
                     }
                 }
             } while (sortedThisLoop > 0);
@@ -218,11 +243,88 @@ public class InventoryTransaction {
             MainLogger.getLogger().debug("Successfully compacted " + originalList.size() + " actions for " + this.source.getName());
         }
 
+        boolean flag = true;
+        for (InventoryAction action : this.actions) {
+            if(!action.isValid(source)) {
+                flag = false;
+                break;
+            }
+        }
+        if(!flag) {
+            System.out.println("Start Advance Fix");
+
+            List<Item> needItems = new LinkedList<>();
+            List<Item> haveItems = new LinkedList<>();
+
+            for (InventoryAction action : actions) {
+                if (action instanceof SlotChangeAction) {
+                    SlotChangeAction slotChangeAction = (SlotChangeAction)action;
+
+                    needItems.add(slotChangeAction.getInventory().getItem(slotChangeAction.getSlot()));
+                    haveItems.add(slotChangeAction.getSourceItem());
+                }
+            }
+
+            for (Item needItem : new ArrayList<>(needItems)) {
+                for (Item haveItem : new ArrayList<>(haveItems)) {
+                    if (needItem.equals(haveItem)) {
+                        int amount = Math.min(haveItem.getCount(), needItem.getCount());
+                        needItem.setCount(needItem.getCount() - amount);
+                        haveItem.setCount(haveItem.getCount() - amount);
+                        if (haveItem.getCount() == 0) {
+                            haveItems.remove(haveItem);
+                        }
+                        if (needItem.getCount() == 0) {
+                            needItems.remove(needItem);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            while (needItems.size() > 0) {
+                if(needItems.get(0).getId() == Item.AIR) {
+                    needItems.remove(0);
+                } else {
+                    needItems.remove(0);
+                }
+            }
+
+            while (haveItems.size() > 0) {
+                if(haveItems.get(0).getId() == Item.AIR) {
+                    haveItems.remove(0);
+                } else {
+                    haveItems.remove(0);
+                }
+            }
+
+            if(needItems.isEmpty() && haveItems.isEmpty()) {
+                for (InventoryAction action : actions) {
+                    if (action instanceof SlotChangeAction) {
+                        SlotChangeAction slotChangeAction = (SlotChangeAction)action;
+
+                        slotChangeAction.setSourceItem(slotChangeAction.getInventory().getItem(slotChangeAction.getSlot()));
+                    }
+                }
+            }
+        }
+
         return true;
     }
 
     public boolean canExecute() {
         this.squashDuplicateSlotChanges();
+
+        for (InventoryAction action : this.actions) {
+            int slot = -1;
+            String type = "";
+            if (action instanceof SlotChangeAction) {
+                slot = ((SlotChangeAction)action).getSlot();
+                type = ((SlotChangeAction)action).getInventory().getType().getDefaultTitle();
+            }
+            System.out.println(String.format("Fixed %d:%d -> %d:%d @ %s:%d", action.getSourceItem().getId(), action.getSourceItem().getCount(), action.getTargetItem().getId(), action.getTargetItem().getCount(), type, slot));
+
+        }
 
         List<Item> haveItems = new ArrayList<>();
         List<Item> needItems = new ArrayList<>();
@@ -262,6 +364,8 @@ public class InventoryTransaction {
                 action.onExecuteFail(this.source);
             }
         }
+
+        System.out.println();
 
         this.hasExecuted = true;
         return true;

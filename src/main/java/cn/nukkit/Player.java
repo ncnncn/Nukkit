@@ -2715,6 +2715,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (this.craftingTransaction.getPrimaryOutput() != null) {
                             //we get the actions for this in several packets, so we can't execute it until we get the result
 
+                            Item[][] itemMap = this.craftingTransaction.getInputMap();
+                            for(int i=0; i<3; i++) {
+                                for (int j=0; j<3; j++) {
+                                    System.out.print(itemMap[i][j].getId() + ":" + itemMap[i][j].getCount() + "\t");
+                                }
+
+                                System.out.println();
+                            }
+
+                            Item output = this.craftingTransaction.getPrimaryOutput();
+                            System.out.println(output.getId() + ":" + output.getCount() + "\t");
+
+                            System.out.println();
+
+
                             this.craftingTransaction.execute();
                             this.craftingTransaction = null;
                         }
@@ -2731,6 +2746,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             if (!transaction.execute()) {
                                 this.server.getLogger().debug("Failed to execute inventory transaction from " + this.getName() + " with actions: " + Arrays.toString(transactionPacket.actions));
+
                                 break packetswitch; //oops!
                             }
 

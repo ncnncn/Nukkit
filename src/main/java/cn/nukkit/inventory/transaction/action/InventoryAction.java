@@ -79,4 +79,9 @@ public abstract class InventoryAction {
      * Performs additional actions when this inventory-action did not complete successfully.
      */
     abstract public void onExecuteFail(Player source);
+
+    //for packet fix
+    public void setSourceItem(Item sourceItem) {
+        this.sourceItem = sourceItem;
+    }
 }
