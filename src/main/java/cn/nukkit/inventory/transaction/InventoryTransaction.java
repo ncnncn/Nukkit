@@ -50,19 +50,7 @@ public class InventoryTransaction {
                 type = ((SlotChangeAction)action).getInventory().getType().getDefaultTitle();
             }
 
-            System.out.println(String.format("Try %d:%d -> %d:%d @ %s:%d", action.getSourceItem().getId(), action.getSourceItem().getCount(), action.getTargetItem().getId(), action.getTargetItem().getCount(), type, slot));
-        }
-        Map<Integer, Item> contents = source.getCraftingGrid().getContents();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                Item item = contents.get(i*3 + j);
-                if(item != null) {
-                    System.out.print(String.format("%d:%d\t", item.getId(), item.getCount()));
-                } else {
-                    System.out.print("-\t");
-                }
-            }
-            System.out.println();
+            MainLogger.getLogger().debug(String.format("Try %d:%d -> %d:%d @ %s:%d", action.getSourceItem().getId(), action.getSourceItem().getCount(), action.getTargetItem().getId(), action.getTargetItem().getCount(), type, slot));
         }
     }
 
@@ -251,7 +239,9 @@ public class InventoryTransaction {
             }
         }
         if(!flag) {
-            System.out.println("Start Advance Fix");
+            MainLogger.getLogger().debug("Start Advance Fix");
+
+
 
             List<Item> needItems = new LinkedList<>();
             List<Item> haveItems = new LinkedList<>();
@@ -299,6 +289,8 @@ public class InventoryTransaction {
             }
 
             if(needItems.isEmpty() && haveItems.isEmpty()) {
+                MainLogger.getLogger().debug("Advance Fix Success");
+
                 for (InventoryAction action : actions) {
                     if (action instanceof SlotChangeAction) {
                         SlotChangeAction slotChangeAction = (SlotChangeAction)action;
@@ -306,6 +298,8 @@ public class InventoryTransaction {
                         slotChangeAction.setSourceItem(slotChangeAction.getInventory().getItem(slotChangeAction.getSlot()));
                     }
                 }
+            } else {
+                MainLogger.getLogger().debug("Advance fix Fail");
             }
         }
 
@@ -322,7 +316,7 @@ public class InventoryTransaction {
                 slot = ((SlotChangeAction)action).getSlot();
                 type = ((SlotChangeAction)action).getInventory().getType().getDefaultTitle();
             }
-            System.out.println(String.format("Fixed %d:%d -> %d:%d @ %s:%d", action.getSourceItem().getId(), action.getSourceItem().getCount(), action.getTargetItem().getId(), action.getTargetItem().getCount(), type, slot));
+            MainLogger.getLogger().debug(String.format("Fixed %d:%d -> %d:%d @ %s:%d", action.getSourceItem().getId(), action.getSourceItem().getCount(), action.getTargetItem().getId(), action.getTargetItem().getCount(), type, slot));
 
         }
 
@@ -364,8 +358,6 @@ public class InventoryTransaction {
                 action.onExecuteFail(this.source);
             }
         }
-
-        System.out.println();
 
         this.hasExecuted = true;
         return true;
