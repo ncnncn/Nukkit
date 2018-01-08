@@ -35,7 +35,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
     public static final List<Integer> ingredients = new ArrayList<Integer>() {
         {
-            addAll(Arrays.asList(Item.NETHER_WART, Item.GOLD_NUGGET, Item.GHAST_TEAR, Item.GLOWSTONE_DUST, Item.REDSTONE_DUST, Item.GUNPOWDER, Item.MAGMA_CREAM, Item.BLAZE_POWDER, Item.GOLDEN_CARROT, Item.SPIDER_EYE, Item.FERMENTED_SPIDER_EYE, Item.GLISTERING_MELON, Item.SUGAR, Item.RAW_FISH));
+            addAll(Arrays.asList(Item.NETHER_WART, Item.GOLD_NUGGET, Item.GHAST_TEAR, Item.GLOWSTONE_DUST, Item.REDSTONE_DUST, Item.GUNPOWDER, Item.MAGMA_CREAM, Item.BLAZE_POWDER, Item.GOLDEN_CARROT, Item.SPIDER_EYE, Item.FERMENTED_SPIDER_EYE, Item.GLISTERING_MELON, Item.SUGAR, Item.RAW_FISH, Item.RABBIT_FOOT, Item.PUFFERFISH));
         }
     };
 
@@ -222,8 +222,8 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
                 if (!e.isCancelled()) {
                     for (int i = 1; i <= 3; i++) {
                         Item potion = this.inventory.getItem(i);
+                        if (potion.getId() == Item.AIR) continue;
                         BrewingRecipe recipe = Server.getInstance().getCraftingManager().matchBrewingRecipe(ingredient, potion);
-
                         if (recipe != null) {
                             this.inventory.setItem(i, recipe.getResult());
                         }

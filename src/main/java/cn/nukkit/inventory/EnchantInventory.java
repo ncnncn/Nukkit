@@ -74,8 +74,9 @@ public class EnchantInventory extends ContainerInventory {
     @Override
     public void onSlotChange(int index, Item before, boolean send) {
         super.onSlotChange(index, before, send);
-
-        if (index == 0) {
+        if (index == -1) {
+            return;
+        } else if (index == 0) {
             Item item = this.getItem(0);
             if (item.getId() == Item.AIR) {
                 this.entries = null;
