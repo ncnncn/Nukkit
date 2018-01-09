@@ -1,6 +1,7 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -8,7 +9,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 /**
  * @author PikyCZ
  */
-public class EntityWither extends EntityMob {
+public class EntityWither extends EntityMob implements EntitySmite {
 
     public static final int NETWORK_ID = 52;
 
