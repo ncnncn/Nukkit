@@ -54,6 +54,8 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_BOW_INFINITY = 22;
     public static final int ID_FORTUNE_FISHING = 23;
     public static final int ID_LURE = 24;
+    public static final int ID_FROST_WALKER = 25;
+    public static final int ID_MENDING = 26;
 
     public static void init() {
         enchantments = new Enchantment[256];
@@ -83,6 +85,8 @@ public abstract class Enchantment implements Cloneable {
         enchantments[ID_BOW_INFINITY] = new EnchantmentBowInfinity();
         enchantments[ID_FORTUNE_FISHING] = new EnchantmentLootFishing();
         enchantments[ID_LURE] = new EnchantmentLure();
+        enchantments[ID_FROST_WALKER] = new EnchantmentFrostWalker();
+        enchantments[ID_MENDING] = new EnchantmentMending();
     }
 
     public static Enchantment get(int id) {

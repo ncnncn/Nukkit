@@ -100,13 +100,19 @@ public class ItemBow extends ItemTool {
             if (player.isSurvival()) {
                 Enchantment infinity;
 
-                if (!this.hasEnchantments() || (infinity = this.getEnchantment(Enchantment.ID_BOW_INFINITY)) == null || infinity.getLevel() <= 0)
+                if (!this.hasEnchantments() || (infinity = this.getEnchantment(Enchantment.ID_BOW_INFINITY)) == null || infinity.getLevel() <= 0) {
                     player.getInventory().removeItem(itemArrow);
+                } else {
+                    if (entityShootBowEvent.getProjectile() instanceof EntityArrow) {
+                        EntityArrow projectile = (EntityArrow) entityShootBowEvent.getProjectile();
+                        projectile.pickAble = false;
+                    }
+                }
                 if (!this.isUnbreakable()) {
                     Enchantment durability = this.getEnchantment(Enchantment.ID_DURABILITY);
                     if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))) {
                         this.setDamage(this.getDamage() + 1);
-                        if (this.getDamage() >= 385) {
+                        if (this.getDamage() >= this.getMaxDurability()) {
                             player.getInventory().setItemInHand(new ItemBlock(new BlockAir(), 0, 0));
                         } else {
                             player.getInventory().setItemInHand(this);

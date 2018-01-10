@@ -46,8 +46,8 @@ public class InventoryTransaction {
             int slot = -1;
             String type = "";
             if (action instanceof SlotChangeAction) {
-                slot = ((SlotChangeAction)action).getSlot();
-                type = ((SlotChangeAction)action).getInventory().getType().getDefaultTitle();
+                slot = ((SlotChangeAction) action).getSlot();
+                type = ((SlotChangeAction) action).getInventory().getType().getDefaultTitle();
             }
 
             MainLogger.getLogger().debug(String.format("Try %d:%d -> %d:%d @ %s:%d", action.getSourceItem().getId(), action.getSourceItem().getCount(), action.getTargetItem().getId(), action.getTargetItem().getCount(), type, slot));
@@ -89,7 +89,9 @@ public class InventoryTransaction {
         }
     }
 
-    protected boolean matchItems(List<Item> needItems, List<Item> haveItems) {
+    protected boolean matchItems() {
+        List<Item> haveItems = new ArrayList<>();
+        List<Item> needItems = new ArrayList<>();
         for (InventoryAction action : this.actions) {
             if (action.getTargetItem().getId() != Item.AIR) {
                 needItems.add(action.getTargetItem());
@@ -206,8 +208,7 @@ public class InventoryTransaction {
                         sortedThisLoop++;
 
                         break;
-                    }
-                    else if (actionSource.equals(lastTargetItem)) {
+                    } else if (actionSource.equals(lastTargetItem)) {
                         lastTargetItem.count -= actionSource.count;
                         list.remove(i);
                         if (lastTargetItem.count == 0) sortedThisLoop++;
@@ -233,14 +234,13 @@ public class InventoryTransaction {
 
         boolean flag = true;
         for (InventoryAction action : this.actions) {
-            if(!action.isValid(source)) {
+            if (!action.isValid(source)) {
                 flag = false;
                 break;
             }
         }
-        if(!flag) {
+        if (!flag) {
             MainLogger.getLogger().debug("Start Advance Fix");
-
 
 
             List<Item> needItems = new LinkedList<>();
@@ -248,7 +248,7 @@ public class InventoryTransaction {
 
             for (InventoryAction action : actions) {
                 if (action instanceof SlotChangeAction) {
-                    SlotChangeAction slotChangeAction = (SlotChangeAction)action;
+                    SlotChangeAction slotChangeAction = (SlotChangeAction) action;
 
                     needItems.add(slotChangeAction.getInventory().getItem(slotChangeAction.getSlot()));
                     haveItems.add(slotChangeAction.getSourceItem());
@@ -273,7 +273,7 @@ public class InventoryTransaction {
             }
 
             while (needItems.size() > 0) {
-                if(needItems.get(0).getId() == Item.AIR) {
+                if (needItems.get(0).getId() == Item.AIR) {
                     needItems.remove(0);
                 } else {
                     needItems.remove(0);
@@ -281,19 +281,19 @@ public class InventoryTransaction {
             }
 
             while (haveItems.size() > 0) {
-                if(haveItems.get(0).getId() == Item.AIR) {
+                if (haveItems.get(0).getId() == Item.AIR) {
                     haveItems.remove(0);
                 } else {
                     haveItems.remove(0);
                 }
             }
 
-            if(needItems.isEmpty() && haveItems.isEmpty()) {
+            if (needItems.isEmpty() && haveItems.isEmpty()) {
                 MainLogger.getLogger().debug("Advance Fix Success");
 
                 for (InventoryAction action : actions) {
                     if (action instanceof SlotChangeAction) {
-                        SlotChangeAction slotChangeAction = (SlotChangeAction)action;
+                        SlotChangeAction slotChangeAction = (SlotChangeAction) action;
 
                         slotChangeAction.setSourceItem(slotChangeAction.getInventory().getItem(slotChangeAction.getSlot()));
                     }
@@ -313,16 +313,16 @@ public class InventoryTransaction {
             int slot = -1;
             String type = "";
             if (action instanceof SlotChangeAction) {
-                slot = ((SlotChangeAction)action).getSlot();
-                type = ((SlotChangeAction)action).getInventory().getType().getDefaultTitle();
+                slot = ((SlotChangeAction) action).getSlot();
+                type = ((SlotChangeAction) action).getInventory().getType().getDefaultTitle();
             }
             MainLogger.getLogger().debug(String.format("Fixed %d:%d -> %d:%d @ %s:%d", action.getSourceItem().getId(), action.getSourceItem().getCount(), action.getTargetItem().getId(), action.getTargetItem().getCount(), type, slot));
 
         }
 
-        List<Item> haveItems = new ArrayList<>();
-        List<Item> needItems = new ArrayList<>();
-        return matchItems(needItems, haveItems) && this.actions.size() > 0 && haveItems.size() == 0 && needItems.size() == 0;
+//        List<Item> haveItems = new ArrayList<>();
+//        List<Item> needItems = new ArrayList<>();
+        return matchItems() && this.actions.size() > 0;
     }
 
     protected boolean callExecuteEvent() {

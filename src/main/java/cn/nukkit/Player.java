@@ -4412,7 +4412,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         if (near) {
-            if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision) {
+            if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision && ((EntityArrow) entity).pickAble) {
                 ItemArrow item = new ItemArrow();
                 if (this.isSurvival() && !this.inventory.canAddItem(item)) {
                     return false;

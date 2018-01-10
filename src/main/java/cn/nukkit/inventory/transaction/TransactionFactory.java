@@ -1,6 +1,7 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.inventory.FurnaceInventory;
 import cn.nukkit.inventory.Inventory;
@@ -26,6 +27,8 @@ public class TransactionFactory {
             return new EnchantingTransaction(player, action);
         } else if (inventories.contains(FurnaceInventory.class)) {
             return new FurnaceTransaction(player, action);
+        } else if (inventories.contains(AnvilInventory.class)) {
+            return new AnvilTransaction(player, action);
         }
 
 
