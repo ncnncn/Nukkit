@@ -7,6 +7,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemApple;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -83,23 +84,31 @@ public class BlockLeaves extends BlockTransparent {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isShears()) {
+        if (item.getEnchantments().length > 0 && item.getEnchantment(Enchantment.ID_SILK_TOUCH).getLevel() > 0) {
             return new Item[]{
-                    toItem()
+                    new ItemBlock(this, 0, 1)
             };
+
         } else {
-            if ((int) ((Math.random()) * 200) == 0 && (this.meta & 0x03) == OAK) {
+            if (item.isShears()) {
                 return new Item[]{
-                        new ItemApple()
+                        toItem()
                 };
+            } else {
+                if ((int) ((Math.random()) * 200) == 0 && (this.meta & 0x03) == OAK) {
+                    return new Item[]{
+                            new ItemApple()
+                    };
+                }
+                if ((int) ((Math.random()) * 20) == 0) {
+                    return new Item[]{
+                            new ItemBlock(new BlockSapling(), this.meta & 0x03, 1)
+                    };
+                }
             }
-            if ((int) ((Math.random()) * 20) == 0) {
-                return new Item[]{
-                        new ItemBlock(new BlockSapling(), this.meta & 0x03, 1)
-                };
-            }
+            return new Item[0];
         }
-        return new Item[0];
+
     }
 
     @Override

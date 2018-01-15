@@ -7,7 +7,6 @@ import cn.nukkit.block.BlockDirt;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.data.*;
-import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -281,6 +280,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected Timing timing;
 
+    protected Random rand = new Random();
     protected boolean isPlayer = false;
 
     public float getHeight() {

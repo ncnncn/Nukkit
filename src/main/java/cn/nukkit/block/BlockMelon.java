@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemMelon;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -43,17 +44,26 @@ public class BlockMelon extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        Random random = new Random();
-        int count = 3 + random.nextInt(5);
+        if (item.getEnchantments().length > 0 && item.getEnchantment(Enchantment.ID_SILK_TOUCH).getLevel() > 0) {
+            return new Item[]{
+                    new ItemBlock(this, 0, 1)
+            };
 
-        Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
-        if (fortune != null && fortune.getLevel() >= 1) {
-            count += random.nextInt(fortune.getLevel() + 1);
+        } else {
+            Random random = new Random();
+            int count = 3 + random.nextInt(5);
+
+            Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
+            if (fortune != null && fortune.getLevel() >= 1) {
+                count += random.nextInt(fortune.getLevel() + 1);
+            }
+
+            return new Item[]{
+                    new ItemMelon(0, Math.min(9, count))
+            };
         }
 
-        return new Item[]{
-                new ItemMelon(0, Math.min(9, count))
-        };
+
     }
 
     @Override

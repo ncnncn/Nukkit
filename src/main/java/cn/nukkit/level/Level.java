@@ -32,6 +32,8 @@ import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.level.format.leveldb.LevelDB;
 import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.biome.Biome;
+import cn.nukkit.level.generator.biome.SnowyBiome;
 import cn.nukkit.level.generator.task.*;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
@@ -50,6 +52,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.timings.LevelTimings;
 import cn.nukkit.utils.*;
+import cn.nukkit.utils.MathHelper;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
 import com.google.common.cache.CacheBuilder;
@@ -3211,4 +3214,28 @@ public class Level implements ChunkManager, Metadatable {
     public int getSpawnRadius() {
         return getGameRules().getInt("spawnRadius");
     }
+
+    public boolean isRainingAt(Vector3 strikePosition) {
+        if (!this.isRaining()) {
+            return false;
+        } else if (!this.canBlockSeeSky(strikePosition)) {
+            return false;
+        }
+        //TODO rain can pass unsolid block
+//        else if (this.getPrecipitationHeight(strikePosition).getY() > strikePosition.getY()) {
+//            return false;
+//        }
+        else {
+            Biome biome = Biome.getBiome(this.getBiomeId(strikePosition.getFloorX(), strikePosition.getFloorZ()));
+
+            if (biome instanceof SnowyBiome) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+
 }
+
+

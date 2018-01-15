@@ -532,7 +532,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[CARPET] = BlockCarpet.class; //171
             list[TERRACOTTA] = BlockTerracotta.class; //172
             list[COAL_BLOCK] = BlockCoal.class; //173
-            list[PACKED_ICE] = BlockIcePacked.class; //174
+            list[PACKED_ICE] = BlockPackedIce.class; //174
             list[DOUBLE_PLANT] = BlockDoublePlant.class; //175
 
             list[DAYLIGHT_DETECTOR_INVERTED] = BlockDaylightDetectorInverted.class; //178
@@ -826,6 +826,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                     this.toItem()
             };
         }
+
     }
 
     private static double toolBreakTimeBonus0(

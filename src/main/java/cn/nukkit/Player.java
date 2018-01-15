@@ -12,6 +12,7 @@ import cn.nukkit.entity.*;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityFishHook;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -221,7 +222,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public int pickedXPOrb = 0;
 
+    public EntityFishHook fishHook;
+
     protected int formWindowCount = 0;
+
+
     protected Map<Integer, FormWindow> formWindows = new HashMap<>();
     protected Map<Integer, FormWindow> serverSettings = new HashMap<>();
 

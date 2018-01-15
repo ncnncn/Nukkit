@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemCoal;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -50,21 +51,29 @@ public class BlockOreCoal extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            int count = 1;
-            Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
-            if (fortune != null && fortune.getLevel() >= 1) {
-                int i = ThreadLocalRandom.current().nextInt(fortune.getLevel() + 2) - 1;
+            if (item.getEnchantments().length > 0 && item.getEnchantment(Enchantment.ID_SILK_TOUCH).getLevel() > 0) {
+                return new Item[]{
+                        new ItemBlock(this, 0, 1)
+                };
 
-                if (i < 0) {
-                    i = 0;
+            } else {
+                int count = 1;
+                Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
+                if (fortune != null && fortune.getLevel() >= 1) {
+                    int i = ThreadLocalRandom.current().nextInt(fortune.getLevel() + 2) - 1;
+
+                    if (i < 0) {
+                        i = 0;
+                    }
+
+                    count = i + 1;
                 }
 
-                count = i + 1;
+                return new Item[]{
+                        new ItemCoal(0, count)
+                };
             }
 
-            return new Item[]{
-                    new ItemCoal(0, count)
-            };
         } else {
             return new Item[0];
         }
