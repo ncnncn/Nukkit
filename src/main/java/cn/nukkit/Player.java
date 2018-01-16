@@ -2531,7 +2531,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
 
                     switch (entityEventPacket.event) {
-                        case EntityEventPacket.EATING_ITEM:
+                        case EntityEventPacket.FEED:
                             if (entityEventPacket.data == 0) {
                                 break;
                             }
@@ -2539,7 +2539,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             /*this.dataPacket(packet); //bug?
                             Server.broadcastPacket(this.getViewers().values(), packet);*/
                             break;
-                        case EntityEventPacket.ENCHANT:
+                        case EntityEventPacket.ADD_PLAYER_LEVELS:
                             if (entityEventPacket.data < 0 && (this.getExperienceLevel() + entityEventPacket.data) >= 0) {
                                 this.expLevel = this.expLevel + entityEventPacket.data;
                                 sendExperienceLevel();
@@ -3810,7 +3810,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.getFoodData().updateFoodExpLevel(0.3);
                 EntityEventPacket pk = new EntityEventPacket();
                 pk.eid = this.id;
-                pk.event = EntityEventPacket.HURT_ANIMATION;
+                pk.event = EntityEventPacket.HURT;
                 this.dataPacket(pk);
             }
             return true;
@@ -4541,5 +4541,59 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         ShowProfilePacket pk = new ShowProfilePacket();
         pk.xuid = xuid;
         this.dataPacket(pk);
+    }
+
+    @Override
+    public boolean entityBaseTick(int tickDiff) {
+        Timings.livingEntityBaseTickTimer.startTiming();
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_BREATHING, !this.isInsideOfWater());
+
+        boolean hasUpdate = super.entityBaseTick(tickDiff);
+
+        if (this.isAlive()) {
+
+            if (this.isInsideOfSolid()) {
+                hasUpdate = true;
+                this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 1));
+            }
+
+            if ((this.gamemode == 0 || this.gamemode == 2) && !this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
+
+                hasUpdate = true;
+
+
+                Boolean respirationUndamaged = Optional.ofNullable(getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_BREATHING))
+                        .map(Enchantment::getLevel).map(l -> l > 0 && (l / (l + 1.0) > Math.random())).orElse(false);
+
+                int airTicks = this.getDataPropertyShort(DATA_AIR) - (respirationUndamaged ? 0 : tickDiff);
+                if (airTicks <= -20) {
+                    airTicks = 0;
+                    if (!respirationUndamaged)
+                        this.attack(new EntityDamageEvent(this, DamageCause.DROWNING, 2));
+                }
+
+                this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
+
+            } else {
+
+                this.setDataProperty(new ShortEntityData(DATA_AIR, 400));
+
+            }
+        }
+
+        if (this.attackTime > 0) {
+            this.attackTime -= tickDiff;
+        }
+        if (this.riding == null) {
+            for (Entity entity : level.getNearbyEntities(this.boundingBox.grow(0.20000000298023224D, 0.0D, 0.20000000298023224D), this)) {
+                if (entity instanceof EntityRideable) {
+                    this.collidingWith(entity);
+                }
+            }
+        }
+
+        Timings.livingEntityBaseTickTimer.stopTiming();
+
+        return hasUpdate;
     }
 }

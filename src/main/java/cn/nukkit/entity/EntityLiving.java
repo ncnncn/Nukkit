@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.data.ShortEntityData;
-import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -72,7 +71,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         if (this.isAlive() && !wasAlive) {
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getId();
-            pk.eid = EntityEventPacket.RESPAWN;
+            pk.eid = EntityEventPacket.SPAWN_ALIVE;
             Server.broadcastPacket(this.hasSpawned.values(), pk);
         }
     }
@@ -129,7 +128,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getId();
-            pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
+            pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT;
             Server.broadcastPacket(this.hasSpawned.values(), pk);
 
             this.attackTime = 10;
