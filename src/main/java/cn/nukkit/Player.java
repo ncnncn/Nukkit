@@ -4573,7 +4573,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!respirationUndamaged)
                         this.attack(new EntityDamageEvent(this, DamageCause.DROWNING, 2));
                 }
-                System.out.println(airTicks);
+//                System.out.println(airTicks);
                 this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
 
             } else {
