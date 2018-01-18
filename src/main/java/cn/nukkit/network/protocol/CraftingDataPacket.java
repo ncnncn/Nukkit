@@ -4,8 +4,6 @@ import cn.nukkit.inventory.FurnaceRecipe;
 import cn.nukkit.inventory.ShapedRecipe;
 import cn.nukkit.inventory.ShapelessRecipe;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.item.enchantment.EnchantmentEntry;
 import cn.nukkit.item.enchantment.EnchantmentList;
 import cn.nukkit.utils.BinaryStream;
 
@@ -91,18 +89,22 @@ public class CraftingDataPacket extends DataPacket {
     }
 
     private static int writeEnchantList(EnchantmentList list, BinaryStream stream) {
-        stream.putByte((byte) list.getSize());
-        for (int i = 0; i < list.getSize(); ++i) {
-            EnchantmentEntry entry = list.getSlot(i);
-            stream.putUnsignedVarInt(entry.getCost());
-            stream.putUnsignedVarInt(entry.getEnchantments().length);
-            for (Enchantment enchantment : entry.getEnchantments()) {
-                stream.putUnsignedVarInt(enchantment.getId());
-                stream.putUnsignedVarInt(enchantment.getLevel());
-            }
-            stream.putString(entry.getRandomName());
-        }
+//        stream.putByte((byte) list.getSize());
+//        for (int i = 0; i < list.getSize(); ++i) {
+//            EnchantmentEntry entry = list.getSlot(i);
+//            stream.putUnsignedVarInt(entry.getCost());
+//            stream.putUnsignedVarInt(entry.getEnchantments().length);
+//            for (Enchantment enchantment : entry.getEnchantments()) {
+//                stream.putUnsignedVarInt(enchantment.getId());
+//                stream.putUnsignedVarInt(enchantment.getLevel());
+//            }
+//            stream.putString(entry.getRandomName());
+//        }
 //        stream.putBoolean(true);
+        stream.putUnsignedVarInt(4);
+        stream.putUnsignedVarLong(System.currentTimeMillis());
+        stream.putUnsignedVarLong(System.currentTimeMillis() - 100000);
+
         return CraftingDataPacket.ENTRY_ENCHANT_LIST;
     }
 

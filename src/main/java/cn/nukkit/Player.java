@@ -1584,6 +1584,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (!this.loggedIn) {
             return false;
         }
+//        server.getLogger().info(currentTick+"");
+//        server.getLogger().info(System.currentTimeMillis() + "");
 
         int tickDiff = currentTick - this.lastUpdate;
 
@@ -1597,7 +1599,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (!this.isAlive() && this.spawned) {
             ++this.deadTicks;
-            if (this.deadTicks >= 10) {
+            if (this.deadTicks >= 40) {
                 this.despawnFromAll();
             }
             return true;
@@ -2394,7 +2396,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                         case PlayerActionPacket.ACTION_ENCHANTING:
                             if (openInventory != null && openInventory instanceof EnchantInventory) {
-                                //TODO enchant
+                                //TODO update enchanting seed
                             }
                             break;
                     }
@@ -4550,14 +4552,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
-        if (this.isAlive()) {
+        if (this.isAlive() && (this.gamemode == 0 || this.gamemode == 2)) {
 
             if (this.isInsideOfSolid()) {
                 hasUpdate = true;
                 this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 1));
             }
 
-            if ((this.gamemode == 0 || this.gamemode == 2) && !this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
+            if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
 
                 hasUpdate = true;
 
@@ -4565,18 +4567,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 Boolean respirationUndamaged = Optional.ofNullable(getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_BREATHING))
                         .map(Enchantment::getLevel).map(l -> l > 0 && (l / (l + 1.0) > Math.random())).orElse(false);
 
-                int airTicks = this.getDataPropertyShort(DATA_AIR) - (respirationUndamaged ? 0 : tickDiff);
+                int airTicks = this.getDataPropertyShort(DATA_AIR) + (respirationUndamaged ? 1 : 0);
                 if (airTicks <= -20) {
                     airTicks = 0;
                     if (!respirationUndamaged)
                         this.attack(new EntityDamageEvent(this, DamageCause.DROWNING, 2));
                 }
-
+                System.out.println(airTicks);
                 this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
 
             } else {
 
-                this.setDataProperty(new ShortEntityData(DATA_AIR, 400));
+
+                this.setDataProperty(new ShortEntityData(DATA_AIR, 400), false);
 
             }
         }
