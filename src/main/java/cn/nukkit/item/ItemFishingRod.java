@@ -32,6 +32,11 @@ public class ItemFishingRod extends Item {
     }
 
     @Override
+    public int getMaxDurability() {
+        return 360;
+    }
+
+    @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
         boolean air = super.onClickAir(player, directionVector);
 //TODO

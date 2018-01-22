@@ -14,6 +14,7 @@ import cn.nukkit.entity.projectile.*;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
+import cn.nukkit.event.player.PlayerTickEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.inventory.Recipe;
@@ -921,6 +922,8 @@ public class Server {
 
             if (this.alwaysTickPlayers) {
                 p.onUpdate(currentTick);
+                getPluginManager().callEvent(new PlayerTickEvent(p, currentTick));
+
             }
         }
 

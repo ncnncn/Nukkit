@@ -388,6 +388,101 @@ public class EntityFishHook extends EntityProjectile {
         return this.angler;
     }
 
+    public boolean isInGround() {
+        return inGround;
+    }
+
+    public void setInGround(boolean inGround) {
+        this.inGround = inGround;
+    }
+
+    public int getTicksInGround() {
+        return ticksInGround;
+    }
+
+    public void setTicksInGround(int ticksInGround) {
+        this.ticksInGround = ticksInGround;
+    }
+
+    public Player getAngler() {
+        return angler;
+    }
+
+    public void setAngler(Player angler) {
+        this.angler = angler;
+    }
+
+    public int getTicksInAir() {
+        return ticksInAir;
+    }
+
+    public void setTicksInAir(int ticksInAir) {
+        this.ticksInAir = ticksInAir;
+    }
+
+    public int getTicksCatchable() {
+        return ticksCatchable;
+    }
+
+    public void setTicksCatchable(int ticksCatchable) {
+        this.ticksCatchable = ticksCatchable;
+    }
+
+    public int getTicksCaughtDelay() {
+        return ticksCaughtDelay;
+    }
+
+    public void setTicksCaughtDelay(int ticksCaughtDelay) {
+        this.ticksCaughtDelay = ticksCaughtDelay;
+    }
+
+    public int getTicksCatchableDelay() {
+        return ticksCatchableDelay;
+    }
+
+    public void setTicksCatchableDelay(int ticksCatchableDelay) {
+        this.ticksCatchableDelay = ticksCatchableDelay;
+    }
+
+    public float getFishApproachAngle() {
+        return fishApproachAngle;
+    }
+
+    public void setFishApproachAngle(float fishApproachAngle) {
+        this.fishApproachAngle = fishApproachAngle;
+    }
+
+    public Entity getCaughtEntity() {
+        return caughtEntity;
+    }
+
+    public void setCaughtEntity(Entity caughtEntity) {
+        this.caughtEntity = caughtEntity;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public int getLure() {
+        return lure;
+    }
+
+    public void setLure(int lure) {
+        this.lure = lure;
+    }
+
+    public int getLuck() {
+        return luck;
+    }
+
+    public void setLuck(int luck) {
+        this.luck = luck;
+    }
 
     static enum State {
         FLYING,
