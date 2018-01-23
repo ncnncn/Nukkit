@@ -1270,7 +1270,8 @@ public abstract class Entity extends Location implements Metadatable {
     public void setAbsorption(float absorption) {
         if (absorption != this.absorption) {
             this.absorption = absorption;
-            if (this instanceof Player) ((Player) this).setAttribute(Attribute.getAttribute(Attribute.ABSORPTION).setValue(absorption));
+            if (this instanceof Player)
+                ((Player) this).setAttribute(Attribute.getAttribute(Attribute.ABSORPTION).setValue(absorption));
         }
     }
 
@@ -1791,21 +1792,22 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean setMotion(Vector3 motion) {
-        if (!this.justCreated) {
-            EntityMotionEvent ev = new EntityMotionEvent(this, motion);
-            this.server.getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) {
-                return false;
-            }
+//        if (!this.justCreated) {
+        EntityMotionEvent ev = new EntityMotionEvent(this, motion);
+        this.server.getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return false;
         }
+//        }
 
         this.motionX = motion.x;
         this.motionY = motion.y;
         this.motionZ = motion.z;
 
-        if (!this.justCreated) {
-            this.updateMovement();
-        }
+
+//        if (!this.justCreated) {
+        this.updateMovement();
+//        }
 
         return true;
     }
