@@ -14,6 +14,7 @@ import cn.nukkit.entity.projectile.*;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
+import cn.nukkit.event.player.PlayerDataSaveEvent;
 import cn.nukkit.event.player.PlayerTickEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.inventory.CraftingManager;
@@ -1441,6 +1442,8 @@ public class Server {
     public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
         if (this.shouldSavePlayerData()) {
             try {
+                this.getPluginManager().callEvent(new PlayerDataSaveEvent(name, tag));
+
                 if (async) {
                     this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
                 } else {
