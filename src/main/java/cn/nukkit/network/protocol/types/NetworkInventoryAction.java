@@ -199,8 +199,8 @@ public class NetworkInventoryAction {
                             break;
                         case SOURCE_TYPE_ANVIL_RESULT:
                             this.inventorySlot = 2;
-                            anvil.clear(0);
-                            anvil.clear(1);
+//                            anvil.clear(0);
+//                            anvil.clear(1);
 //                            anvil.setItem(2, this.oldItem);
                             //System.out.println("action result");
                             return new SlotChangeAction(anvil, this.inventorySlot, this.newItem, this.oldItem);

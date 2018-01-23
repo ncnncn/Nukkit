@@ -10,8 +10,11 @@ import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.TNTPrimeSound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+
+import java.util.Collection;
 
 /**
  * @author MagicDroidX
@@ -129,14 +132,14 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
             motionX *= friction;
             motionY *= friction;
             motionZ *= friction;
-
+            if (onGround) {
+                this.setMotion(new Vector3(0, 0, 0));
+                Collection<Player> values = this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4).values();
+                sendData(values.stream().toArray(Player[]::new));
+            }
             updateMovement();
 
-            if (onGround) {
-                motionY *= -0.5;
-                motionX *= 0.7;
-                motionZ *= 0.7;
-            }
+
 
             fuse -= tickDiff;
 

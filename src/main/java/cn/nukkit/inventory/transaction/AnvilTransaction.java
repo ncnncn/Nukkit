@@ -1,10 +1,13 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class AnvilTransaction extends InventoryTransaction {
@@ -48,7 +51,49 @@ public class AnvilTransaction extends InventoryTransaction {
             }
         }
 
-        return haveItems.isEmpty() && (needItems.isEmpty() || (needItems.size() == 4));
+        return haveItems.isEmpty() && (needItems.isEmpty() || (needItems.size() == 2));
+    }
+
+    @Override
+    public boolean canExecute() {
+        this.squashDuplicateSlotChanges();
+        Boolean isResult = false;
+
+        for (InventoryAction action : this.actions) {
+            if (action instanceof SlotChangeAction) {
+                int slot = ((SlotChangeAction) action).getSlot();
+
+                if (((SlotChangeAction) action).getInventory() instanceof AnvilInventory && slot == 2 && action.getSourceItem().getId() == Item.AIR) {
+                    ((SlotChangeAction) action).getInventory().clear(0, true);
+                    ((SlotChangeAction) action).getInventory().clear(1, true);
+                    ((SlotChangeAction) action).getInventory().clear(2, true);
+                    isResult = true;
+                }
+            }
+
+        }
+
+//        List<Item> haveItems = new ArrayList<>();
+//        List<Item> needItems = new ArrayList<>();
+
+        if (isResult) {
+            HashSet<InventoryAction> actions = new HashSet<>();
+            for (InventoryAction action : this.actions) {
+                if (action instanceof SlotChangeAction) {
+                    int slot = ((SlotChangeAction) action).getSlot();
+                    if (((SlotChangeAction) action).getInventory() instanceof AnvilInventory && slot == 2) {
+                        actions.add(action);
+                    }
+                    if (!(((SlotChangeAction) action).getInventory() instanceof AnvilInventory)) {
+                        actions.add(action);
+                    }
+                }
+            }
+            this.actions = actions;
+            return true;
+        } else {
+            return matchItems() && this.actions.size() > 0;
+        }
     }
 
     @Override

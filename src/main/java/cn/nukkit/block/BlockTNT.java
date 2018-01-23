@@ -72,7 +72,7 @@ public class BlockTNT extends BlockSolid {
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", this.x + 0.5))
-                        .add(new DoubleTag("", this.y))
+                        .add(new DoubleTag("", this.y + 0.5))
                         .add(new DoubleTag("", this.z + 0.5)))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("", -Math.sin(mot) * 0.02))

@@ -1366,8 +1366,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     protected void processMovement(int tickDiff) {
-        if (!this.isAlive() || !this.spawned || this.newPosition == null || this.teleportPosition != null || this.isSleeping()) {
+        if (!this.isAlive() || !this.spawned || this.teleportPosition != null || this.isSleeping()) {
             return;
+        }
+        if (this.newPosition == null) {
+            this.newPosition = new Vector3(this.x, this.y, this.z);
+//                return; //maybe solve that in better way
         }
         Vector3 newPos = this.newPosition;
         double distanceSquared = newPos.distanceSquared(this);
@@ -1399,9 +1403,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             double dz = newPos.z - this.z;
 
             this.fastMove(dx, dy, dz);
-            if (this.newPosition == null) {
-                return; //maybe solve that in better way
-            }
+
 
             double diffX = this.x - newPos.x;
             double diffY = this.y - newPos.y;
