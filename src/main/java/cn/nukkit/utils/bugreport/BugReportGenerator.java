@@ -66,10 +66,15 @@ public class BugReportGenerator extends Thread {
         File mdReport = new File(reports, date + "_" + throwable.getClass().getSimpleName() + ".md");
         mdReport.createNewFile();
         String content = Utils.readFile(this.getClass().getClassLoader().getResourceAsStream("report_template.md"));
+        String abbrev = "";
 
-        Properties properties = getGitRepositoryState();
-        System.out.println(properties.getProperty("git.commit.id.abbrev"));
-        String abbrev = properties.getProperty("git.commit.id.abbrev");
+        try {
+            Properties properties = getGitRepositoryState();
+            System.out.println(properties.getProperty("git.commit.id.abbrev"));
+            abbrev = properties.getProperty("git.commit.id.abbrev");
+        } catch (Exception e) {
+            abbrev = "unknown";
+        }
 
         content = content.replace("${NUKKIT_VERSION}", Nukkit.VERSION);
         content = content.replace("${GIT_COMMIT_ABBREV}", abbrev);

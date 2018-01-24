@@ -20,6 +20,7 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
         try {
             new BugReportGenerator(throwable).start();
         } catch (Exception exception) {
+            exception.printStackTrace();
             // Fail Safe
         }
     }
