@@ -96,15 +96,15 @@ public class Level implements ChunkManager, Metadatable {
     // Lower values use less memory
     public static final int MAX_BLOCK_CACHE = 512;
 
-    private final Map<Long, BlockEntity> blockEntities = new HashMap<>();
+    private final Map<Long, BlockEntity> blockEntities = new ConcurrentHashMap<>();
 
-    private final Map<Long, Player> players = new HashMap<>();
+    private final Map<Long, Player> players = new ConcurrentHashMap<>();
 
-    private final Map<Long, Entity> entities = new HashMap<>();
+    private final Map<Long, Entity> entities = new ConcurrentHashMap<>();
 
-    public final Map<Long, Entity> updateEntities = new HashMap<>();
+    public final Map<Long, Entity> updateEntities = new ConcurrentHashMap<>();
 
-    public final Map<Long, BlockEntity> updateBlockEntities = new HashMap<>();
+    public final Map<Long, BlockEntity> updateBlockEntities = new ConcurrentHashMap<>();
 
     // Use a weak map to avoid OOM
     private final ConcurrentMap<Object, Object> blockCache = CacheBuilder.newBuilder()
@@ -126,17 +126,17 @@ public class Level implements ChunkManager, Metadatable {
 
     private LevelProvider provider;
 
-    private final Map<Integer, ChunkLoader> loaders = new HashMap<>();
+    private final Map<Integer, ChunkLoader> loaders = new ConcurrentHashMap<>();
 
-    private final Map<Integer, Integer> loaderCounter = new HashMap<>();
+    private final Map<Integer, Integer> loaderCounter = new ConcurrentHashMap<>();
 
-    private final Map<Long, Map<Integer, ChunkLoader>> chunkLoaders = new HashMap<>();
+    private final Map<Long, Map<Integer, ChunkLoader>> chunkLoaders = new ConcurrentHashMap<>();
 
-    private final Map<Long, Map<Integer, Player>> playerLoaders = new HashMap<>();
+    private final Map<Long, Map<Integer, Player>> playerLoaders = new ConcurrentHashMap<>();
 
-    private Map<Long, List<DataPacket>> chunkPackets = new HashMap<>();
+    private Map<Long, List<DataPacket>> chunkPackets = new ConcurrentHashMap<>();
 
-    private final Map<Long, Long> unloadQueue = new HashMap<>();
+    private final Map<Long, Long> unloadQueue = new ConcurrentHashMap<>();
 
     private float time;
     public boolean stopTime;
@@ -150,11 +150,11 @@ public class Level implements ChunkManager, Metadatable {
     private Vector3 mutableBlock;
 
     // Avoid OOM, gc'd references result in whole chunk being sent (possibly higher cpu)
-    private Map<Long, SoftReference<Map<Short, Object>>> changedBlocks = new HashMap<>();
+    private Map<Long, SoftReference<Map<Short, Object>>> changedBlocks = new ConcurrentHashMap<>();
     // Storing the vector is redundant
     private final Object changeBlocksPresent = new Object();
     // Storing extra blocks past 512 is redundant
-    private final Map<Short, Object> changeBlocksFullMap = new HashMap<Short, Object>() {
+    private final Map<Short, Object> changeBlocksFullMap = new ConcurrentHashMap<Short, Object>() {
         @Override
         public int size() {
             return 32768;
@@ -164,12 +164,12 @@ public class Level implements ChunkManager, Metadatable {
     private final TreeSet<BlockUpdateEntry> updateQueue = new TreeSet<>();
     //private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
 
-    private final Map<Long, Map<Integer, Player>> chunkSendQueue = new HashMap<>();
-    private final Map<Long, Boolean> chunkSendTasks = new HashMap<>();
+    private final Map<Long, Map<Integer, Player>> chunkSendQueue = new ConcurrentHashMap<>();
+    private final Map<Long, Boolean> chunkSendTasks = new ConcurrentHashMap<>();
 
-    private final Map<Long, Boolean> chunkPopulationQueue = new HashMap<>();
-    private final Map<Long, Boolean> chunkPopulationLock = new HashMap<>();
-    private final Map<Long, Boolean> chunkGenerationQueue = new HashMap<>();
+    private final Map<Long, Boolean> chunkPopulationQueue = new ConcurrentHashMap<>();
+    private final Map<Long, Boolean> chunkPopulationLock = new ConcurrentHashMap<>();
+    private final Map<Long, Boolean> chunkGenerationQueue = new ConcurrentHashMap<>();
     private int chunkGenerationQueueSize = 8;
     private int chunkPopulationQueueSize = 2;
 
@@ -187,10 +187,10 @@ public class Level implements ChunkManager, Metadatable {
     public int sleepTicks = 0;
 
     private int chunkTickRadius;
-    private Map<Long, Integer> chunkTickList = new HashMap<>();
+    private Map<Long, Integer> chunkTickList = new ConcurrentHashMap<>();
     private int chunksPerTicks;
     private boolean clearChunksOnTick;
-    private final HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {
+    private final Map<Integer, Class<? extends Block>> randomTickBlocks = new ConcurrentHashMap<Integer, Class<? extends Block>>() {
         {
             put(Block.GRASS, BlockGrass.class);
             put(Block.FARMLAND, BlockFarmland.class);
@@ -2566,7 +2566,7 @@ public class Level implements ChunkManager, Metadatable {
         return this.loadChunk(x, z, true);
     }
 
-    public boolean loadChunk(int x, int z, boolean generate) {
+    public synchronized boolean loadChunk(int x, int z, boolean generate) {
         Long index = Level.chunkHash(x, z);
         if (this.chunks.containsKey(index)) {
             return true;

@@ -74,10 +74,12 @@ import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
+import io.netty.util.internal.ConcurrentSet;
 
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author MagicDroidX
@@ -172,7 +174,7 @@ public class Server {
     private final String dataPath;
     private final String pluginPath;
 
-    private final Set<UUID> uniquePlayers = new HashSet<>();
+    private final Set<UUID> uniquePlayers = new ConcurrentSet<>();
 
     private QueryHandler queryHandler;
 
@@ -181,13 +183,13 @@ public class Server {
     private Config properties;
     private Config config;
 
-    private final Map<String, Player> players = new HashMap<>();
+    private final Map<String, Player> players = new ConcurrentHashMap<>();
 
-    private final Map<UUID, Player> playerList = new HashMap<>();
+    private final Map<UUID, Player> playerList = new ConcurrentHashMap<>();
 
-    private final Map<Integer, String> identifier = new HashMap<>();
+    private final Map<Integer, String> identifier = new ConcurrentHashMap<>();
 
-    private final Map<Integer, Level> levels = new HashMap<>();
+    private final Map<Integer, Level> levels = new ConcurrentHashMap<>();
 
     private final ServiceManager serviceManager = new NKServiceManager();
 
