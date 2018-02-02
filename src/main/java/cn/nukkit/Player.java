@@ -2037,8 +2037,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.rawUUID = Binary.writeUUID(this.uuid);
 
                     boolean valid = true;
-                    int len = loginPacket.username.length();
-                    if (len > 16 || len < 3) {
+                    /*int len = loginPacket.username.length();
+                    if (len > 32 || len < 0) {
                         valid = false;
                     }
 
@@ -2054,7 +2054,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         valid = false;
                         break;
-                    }
+                    }*/
 
                     if (!valid || Objects.equals(this.iusername, "rcon") || Objects.equals(this.iusername, "console")) {
                         this.close("", "disconnectionScreen.invalidName");
@@ -3991,7 +3991,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.resetFallDistance();
             this.nextChunkOrderRun = 0;
-            this.newPosition = null;
+            this.newPosition = to;
 
             //DummyBossBar
             this.getDummyBossBars().values().forEach(DummyBossBar::reshow);

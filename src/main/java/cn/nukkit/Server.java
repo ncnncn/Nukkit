@@ -962,6 +962,7 @@ public class Server {
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 if (Nukkit.DEBUG > 1 && this.logger != null) {
                     this.logger.logException(e);
                 }

@@ -141,7 +141,7 @@ public class BlockEnderChest extends BlockTransparent {
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            if (item.getEnchantments().length > 0 && item.getEnchantment(Enchantment.ID_SILK_TOUCH).getLevel() > 0) {
+            if (item.getEnchantments().length > 0 && item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null && item.getEnchantment(Enchantment.ID_SILK_TOUCH).getLevel() > 0) {
                 return new Item[]{
                         new ItemBlock(this, 0, 1)
                 };
