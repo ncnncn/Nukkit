@@ -2753,6 +2753,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         case InventoryTransactionPacket.TYPE_NORMAL:
                             InventoryTransaction transaction = TransactionFactory.createTransaction(this, actions);
                             if (!transaction.execute()) {
+                                for (Inventory craftingGrid : transaction.getInventories()) {
+                                    if (craftingGrid instanceof CraftingGrid || craftingGrid instanceof BigCraftingGrid) {
+                                        for (Item item1 : ((BaseInventory) craftingGrid).slots.values()) {
+                                            transaction.getSource().getInventory().addItem(item1);
+                                        }
+                                        ((BaseInventory) craftingGrid).slots.clear();
+                                    }
+
+
+                                }
+
                                 this.server.getLogger().debug("Failed to execute inventory transaction from " + this.getName() + " with actions: " + Arrays.toString(transactionPacket.actions));
 
                                 break packetswitch; //oops!
